@@ -1,7 +1,9 @@
 # doc_manager/cli.py
 import argparse
-from .core import list_documents # Importa a função do nosso módulo core
+from .core import list_documents # Mantemos este import
+# from .core import add_document # Adicionaremos este import quando a função existir no core.py
 
+# ... (função handle_list_command permanece a mesma) ...
 def handle_list_command(args):
     """
     Lida com o comando 'list'. Chama a função list_documents
@@ -17,22 +19,26 @@ def handle_list_command(args):
     print("Documentos encontrados:\n")
     for file_type, years_data in documents_data.items():
         print(f"--- {file_type.upper()} ---")
-        # Ordena os anos em ordem decrescente para visualização (mais recentes primeiro)
         sorted_years = sorted(years_data.keys(), key=lambda y: (isinstance(y, str), y), reverse=True)
 
         for year in sorted_years:
             print(f"  Ano: {year if isinstance(year, int) else 'Ano Desconhecido'}")
             if not years_data[year]:
-                # Isso não deveria acontecer se a estrutura de dados for sempre preenchida corretamente
                 print("    (Nenhum documento para este ano)")
                 continue
             for doc_info in years_data[year]:
                 print(f"    - {doc_info['name']}") 
-                # No futuro, poderíamos adicionar uma opção --verbose para mostrar o caminho completo
-                # print(f"      Caminho: {doc_info['path']}") 
-        print("-" * 20) # Linha separadora para cada tipo
+        print("-" * 20) 
     print("\nListagem concluída.")
 
+def handle_add_command(args):
+    """
+    Lida com o comando 'add'. (Ainda não implementado)
+    """
+    print(f"\nComando 'add' chamado.")
+    print(f"Arquivo a ser adicionado: {args.filepath}")
+    print("A lógica para adicionar o arquivo será implementada aqui.")
+    # Aqui chamaremos a função core.add_document(args.filepath)
 
 def run_cli():
     parser = argparse.ArgumentParser(
@@ -51,15 +57,18 @@ def run_cli():
 
     # --- Parser para o comando 'list' ---
     list_parser = subparsers.add_parser('list', help='Lista todos os documentos na biblioteca.')
-    list_parser.set_defaults(func=handle_list_command) # Associa o comando 'list' à sua função manipuladora
+    list_parser.set_defaults(func=handle_list_command)
+
+    # --- Parser para o comando 'add' ---
+    add_parser = subparsers.add_parser('add', help='Adiciona um novo documento à biblioteca.')
+    add_parser.add_argument('filepath', type=str, help='Caminho completo para o arquivo a ser adicionado.')
+    add_parser.set_defaults(func=handle_add_command) # Associa o comando 'add' à sua função manipuladora
 
     args = parser.parse_args()
 
-    # Chama a função que foi associada ao subcomando (definida em set_defaults)
     if hasattr(args, 'func'):
         args.func(args)
     else:
-        # Se por algum motivo 'func' não estiver definida (não deveria acontecer aqui)
         parser.print_help()
 
 if __name__ == '__main__':

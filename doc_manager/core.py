@@ -53,3 +53,22 @@ def list_documents(library_path=BASE_LIBRARY_PATH):
             })
 
     return organized_docs
+
+if __name__ == '__main__':
+    # Bloco para testar a função list_documents diretamente.
+    # Este código só executa quando o script core.py é rodado diretamente.
+
+    print(f"Procurando documentos em: {os.path.abspath(BASE_LIBRARY_PATH)}")
+
+    # Certifique-se de que os arquivos de exemplo estão criados para este teste.
+    documents = list_documents()
+    if documents:
+        for file_type_key, years_data in documents.items():
+            print(f"\nTipo: {file_type_key.upper()}")
+            for year_key, docs_list in years_data.items():
+                print(f"  Ano: {year_key}")
+                for doc_info in docs_list:
+                    print(f"    - {doc_info['name']} (Caminho: {doc_info['path']})")
+    else:
+        print("Nenhum documento encontrado.")
+        print("Verifique se existem arquivos de exemplo no diretório da biblioteca e se BASE_LIBRARY_PATH está correto.")

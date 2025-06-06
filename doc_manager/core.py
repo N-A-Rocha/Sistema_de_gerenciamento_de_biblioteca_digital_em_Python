@@ -165,6 +165,49 @@ def rename_document(old_name, new_name, library_path=BASE_LIBRARY_PATH):
     except Exception as e:
         return False, f"Erro inesperado ao renomear o arquivo: {e}"
 
+def remove_document(filename, library_path=BASE_LIBRARY_PATH):
+    """
+    Remove um documento da biblioteca.
+
+    Args:
+        filename (str): O nome do arquivo a ser removido (com extensão).
+        library_path (str): O caminho base para o diretório da biblioteca.
+
+    Returns:
+        tuple: (bool, str) indicando sucesso/falha e uma mensagem descritiva.
+    """
+    filepath_to_remove = None
+    found_paths = []
+
+    # 1. Encontrar o caminho completo do arquivo
+    for dirpath, dirnames, filenames in os.walk(library_path):
+        if filename in filenames:
+            found_paths.append(os.path.join(dirpath, filename))
+
+    # 2. Lidar com casos de arquivo não encontrado ou duplicado
+    if not found_paths:
+        return False, f"Erro: Arquivo '{filename}' não encontrado na biblioteca."
+    if len(found_paths) > 1:
+        return False, f"Erro: Múltiplos arquivos com o nome '{filename}' encontrados. Operação ambígua."
+
+    filepath_to_remove = found_paths[0]
+
+    # 3. Remover o arquivo
+    try:
+        os.remove(filepath_to_remove)
+
+        # (Opcional, mas boa prática) Limpar diretórios vazios após a remoção
+        parent_dir = os.path.dirname(filepath_to_remove)
+        if not os.listdir(parent_dir): # Se a pasta do ANO ficou vazia
+            os.rmdir(parent_dir)
+            # Verifica se a pasta do TIPO também ficou vazia
+            type_dir = os.path.dirname(parent_dir)
+            if not os.listdir(type_dir):
+                os.rmdir(type_dir)
+
+        return True, f"Arquivo '{filename}' removido com sucesso."
+    except Exception as e:
+        return False, f"Erro inesperado ao remover o arquivo: {e}"
 
 if __name__ == '__main__':
     # Bloco para testar a função list_documents diretamente.
@@ -184,31 +227,14 @@ if __name__ == '__main__':
     else:
         print("Nenhum documento encontrado.")
         print("Verifique se existem arquivos de exemplo no diretório da biblioteca e se BASE_LIBRARY_PATH está correto.")
-    
-    # --- Testando add_document ---
-    print("\n\n--- Testando a função add_document ---")
-    caminho_arquivo_teste = r"c:\Users\nicol\OneDrive\Área de Trabalho\meu_novo_artigo_2025.pdf"
-
-    if os.path.exists(caminho_arquivo_teste):
-        print(f"Tentando adicionar o arquivo: {caminho_arquivo_teste}")
-        sucesso, mensagem = add_document(caminho_arquivo_teste)
-        print(f"Resultado da adição: {mensagem}")
-        
-        if sucesso:
-            print("\n--- Listando documentos APÓS a tentativa de adição ---")
-            documents_apos_add = list_documents() # Chama list_documents novamente
-            if documents_apos_add:
-                for file_type_key, years_data in documents_apos_add.items():
-                    print(f"\nTipo: {file_type_key.upper()}")
-                    for year_key, docs_list in years_data.items():
-                        print(f"  Ano: {year_key}")
-                        for doc_info in docs_list:
-                            print(f"    - {doc_info['name']} (Caminho: {doc_info['path']})")
-            else:
-                print("Nenhum documento encontrado após a adição.")
-    else:
-        print(f"\nAVISO: Arquivo de teste não encontrado em '{caminho_arquivo_teste}'.")
-        print("Crie este arquivo para que o teste da função add_document possa ser executado.")
     print("\n--- Testando rename_document ---")
-sucesso, mensagem = rename_document("manual_de_boas_praticas_IA_2023.pdf", "guia_ia_para_bibliotecarios_2023.pdf")
-print(mensagem)
+    sucesso, mensagem = rename_document("manual_de_boas_praticas_IA_2023.pdf", "guia_ia_para_bibliotecarios_2023.pdf")
+    print(mensagem)
+
+    print("\n--- Testando remove_document ---")
+    sucesso, mensagem = remove_document("guia_definitivo_IA_2023.pdf") 
+    print(mensagem)
+    if sucesso:
+        print("\n--- Listando documentos APÓS a tentativa de remoção ---")
+        # Chama list_documents novamente para ver se o arquivo sumiu
+        documents_apos_remocao = list_documents()

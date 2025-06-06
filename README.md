@@ -63,15 +63,14 @@ Todos os comandos devem ser executados a partir da pasta raiz do projeto.
 
 ## 📂 Estrutura do Projeto
 
-Sistema_de_gerenciamento_de_biblioteca_digital_em_Python/
-├── doc_manager/              # Pacote principal com a lógica da aplicação
-│   ├── core.py               # Funções principais (lógica de negócio)
-│   └── cli.py                # Lógica da Interface de Linha de Comando (CLI)
-├── digital_library_files/    # Diretório onde os documentos são armazenados
-├── .gitignore                # Arquivos e pastas a serem ignorados pelo Git
-├── CONTRIBUTING.md           # Guia para contribuições ao projeto
-├── README.md                 # Este arquivo
-└── TESTES.md                 # Relatório de testes das funcionalidades
+* **`doc_manager/`**: Pacote principal com a lógica da aplicação.
+    * **`core.py`**: Contém as funções principais e a lógica de negócio do sistema.
+    * **`cli.py`**: Responsável por criar e gerenciar a Interface de Linha de Comando (CLI).
+* **`digital_library_files/`**: Diretório padrão onde os documentos gerenciados são armazenados.
+* **`.gitignore`**: Define quais arquivos e pastas o Git deve ignorar.
+* **`CONTRIBUTING.md`**: Apresenta o guia com as boas práticas para contribuir com o projeto.
+* **`README.md`**: A documentação principal que você está lendo.
+* **`TESTES.md`**: O relatório que documenta os cenários de teste e seus resultados.
 
 ---
 
@@ -86,4 +85,4 @@ Contribuições são bem-vindas! Por favor, leia nosso [Guia de Contribuição](
 
 Foi configurado um "Ruleset" no GitHub para proteger a branch `main`, exigindo Pull Requests para todas as alterações, conforme as boas práticas de desenvolvimento. Devido a uma limitação do GitHub para repositórios privados em contas pessoais gratuitas, a aplicação forçada desta regra não está ativa.
 
-No entanto, para fins de demonstração de um fluxo de trabalho profissional e para garantir a qualidade do código, **todas as contribuições a este projeto seguirão estritamente o fluxo de trabalho com Pull Requests.**
+No entanto, para fins de demonstração de um fluxo de trabalho profissional e para garantir a qualidade do código, **todas as contribuições a este projeto seguirão estritamente o fluxo de trabalho com Pull Requests.**    

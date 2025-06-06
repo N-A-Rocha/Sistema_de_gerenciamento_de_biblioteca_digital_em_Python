@@ -108,6 +108,63 @@ def add_document(source_filepath, library_path=BASE_LIBRARY_PATH):
     except Exception as e: # Captura outros erros inesperados durante a cópia
         return False, f"Erro inesperado ao adicionar o arquivo '{filename}': {e}"
 
+def rename_document(old_name, new_name, library_path=BASE_LIBRARY_PATH):
+    """
+    Renomeia um documento na biblioteca e o move para a pasta correta
+    se o novo nome implicar uma mudança de tipo ou ano.
+
+    Args:
+        old_name (str): O nome de arquivo atual do documento (com extensão).
+        new_name (str): O novo nome de arquivo para o documento (com extensão).
+        library_path (str): O caminho base para o diretório da biblioteca.
+
+    Returns:
+        tuple: (bool, str) indicando sucesso/falha e uma mensagem descritiva.
+    """
+    source_filepath = None
+    found_paths = []
+
+    # 1. Encontrar o caminho completo do arquivo antigo
+    for dirpath, dirnames, filenames in os.walk(library_path):
+        if old_name in filenames:
+            found_paths.append(os.path.join(dirpath, old_name))
+
+    # 2. Lidar com casos de arquivo não encontrado ou duplicado
+    if not found_paths:
+        return False, f"Erro: Arquivo '{old_name}' não encontrado na biblioteca."
+    if len(found_paths) > 1:
+        return False, f"Erro: Múltiplos arquivos com o nome '{old_name}' encontrados. Operação ambígua."
+
+    source_filepath = found_paths[0]
+
+    # 3. Determinar o novo caminho com base no novo nome
+    new_file_type, new_year = get_file_type_and_year(new_name)
+
+    if not new_file_type:
+        new_file_type_for_path = "SemExtensao"
+    else:
+        new_file_type_for_path = new_file_type.upper()
+
+    new_year_for_path = str(new_year)
+
+    destination_dir = os.path.join(library_path, new_file_type_for_path, new_year_for_path)
+    destination_filepath = os.path.join(destination_dir, new_name)
+
+    # 4. Verificar se o novo nome já existe no destino
+    if os.path.exists(destination_filepath):
+        # Se o caminho de origem e destino for o mesmo, é o mesmo arquivo, não faz sentido renomear para o mesmo nome.
+        if source_filepath == destination_filepath:
+             return False, f"Erro: O novo nome é idêntico ao nome antigo."
+        return False, f"Erro: Um arquivo com o nome '{new_name}' já existe no local de destino."
+
+    # 5. Criar diretório de destino e mover/renomear o arquivo
+    try:
+        os.makedirs(destination_dir, exist_ok=True)
+        shutil.move(source_filepath, destination_filepath) # shutil.move lida com renomear e mover
+        return True, f"Arquivo '{old_name}' renomeado para '{new_name}' e movido para '{destination_dir}'."
+    except Exception as e:
+        return False, f"Erro inesperado ao renomear o arquivo: {e}"
+
 
 if __name__ == '__main__':
     # Bloco para testar a função list_documents diretamente.
@@ -152,3 +209,6 @@ if __name__ == '__main__':
     else:
         print(f"\nAVISO: Arquivo de teste não encontrado em '{caminho_arquivo_teste}'.")
         print("Crie este arquivo para que o teste da função add_document possa ser executado.")
+    print("\n--- Testando rename_document ---")
+sucesso, mensagem = rename_document("manual_de_boas_praticas_IA_2023.pdf", "guia_ia_para_bibliotecarios_2023.pdf")
+print(mensagem)

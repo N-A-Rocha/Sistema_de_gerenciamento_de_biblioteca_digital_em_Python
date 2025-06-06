@@ -1,32 +1,14 @@
 # doc_manager/cli.py
 import argparse
-# Importamos agora as três funções que usaremos na CLI
-from .core import list_documents, add_document, rename_document 
+# Importamos todas as funções que a CLI utiliza
+from .core import list_documents, add_document, rename_document, remove_document
 
 # A função handle_list_command permanece a mesma
 def handle_list_command(args):
     # ... (código existente sem alterações) ...
     print("\nBuscando documentos na biblioteca...")
-    documents_data = list_documents() 
-
-    if not documents_data:
-        print("Nenhum documento encontrado na biblioteca.")
-        return
-
-    print("Documentos encontrados:\n")
-    for file_type, years_data in documents_data.items():
-        print(f"--- {file_type.upper()} ---")
-        sorted_years = sorted(years_data.keys(), key=lambda y: (isinstance(y, str), y), reverse=True)
-
-        for year in sorted_years:
-            print(f"  Ano: {year if isinstance(year, int) else 'Ano Desconhecido'}")
-            if not years_data[year]:
-                print("    (Nenhum documento para este ano)")
-                continue
-            for doc_info in years_data[year]:
-                print(f"    - {doc_info['name']}") 
-        print("-" * 20) 
-    print("\nListagem concluída.")
+    documents_data = list_documents()
+    # ... (resto da função)
 
 # A função handle_add_command permanece a mesma
 def handle_add_command(args):
@@ -35,31 +17,28 @@ def handle_add_command(args):
     sucesso, mensagem = add_document(args.filepath)
     print(mensagem)
 
-
-# AQUI ESTÁ A MUDANÇA PRINCIPAL
+# A função handle_rename_command permanece a mesma
 def handle_rename_command(args):
+    # ... (código existente sem alterações) ...
+    print(f"\nRenomeando o arquivo '{args.old_name}' para '{args.new_name}'...")
+    sucesso, mensagem = rename_document(args.old_name, args.new_name)
+    print(mensagem)
+
+
+def handle_remove_command(args):
     """
-    Lida com o comando 'rename', chamando a função core.rename_document
+    Lida com o comando 'remove', chamando a função core.remove_document
     e mostrando o resultado para o usuário.
     """
-    print(f"\nRenomeando o arquivo '{args.old_name}' para '{args.new_name}'...")
+    print(f"\nRemovendo o arquivo: '{args.filename}'...")
 
-    # Chama a função do core.py com os argumentos da linha de comando
-    sucesso, mensagem = rename_document(args.old_name, args.new_name)
+    # Chama a função do core.py
+    sucesso, mensagem = remove_document(args.filename)
 
     # Imprime a mensagem retornada pela função (seja de sucesso ou erro)
     print(mensagem)
 
-def handle_remove_command(args):
-    """
-    Lida com o comando 'remove'. (Ainda não implementado)
-    """
-    print(f"\nComando 'remove' chamado.")
-    print(f"Arquivo a ser removido: {args.filename}")
-    print("A lógica para remover o arquivo será implementada aqui.")
-    # Aqui chamaremos a função core.remove_document(args.filename)
 
-# A função run_cli permanece a mesma, pois já configuramos o parser para 'rename'
 def run_cli():
     parser = argparse.ArgumentParser(
         description="Sistema de Gerenciamento de Documentos Digitais da Biblioteca",

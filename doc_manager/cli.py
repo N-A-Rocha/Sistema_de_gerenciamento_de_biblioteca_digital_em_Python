@@ -1,16 +1,15 @@
 # doc_manager/cli.py
 import argparse
-from .core import list_documents # Mantemos este import
-# from .core import add_document # Adicionaremos este import quando a função existir no core.py
+from .core import list_documents, add_document # Importamos a nova função!
 
-# ... (função handle_list_command permanece a mesma) ...
+# A função handle_list_command permanece a mesma de antes
 def handle_list_command(args):
     """
     Lida com o comando 'list'. Chama a função list_documents
     e formata a saída para o console.
     """
     print("\nBuscando documentos na biblioteca...")
-    documents_data = list_documents() # Chama a função do core.py
+    documents_data = list_documents() 
 
     if not documents_data:
         print("Nenhum documento encontrado na biblioteca.")
@@ -31,15 +30,22 @@ def handle_list_command(args):
         print("-" * 20) 
     print("\nListagem concluída.")
 
+# AQUI ESTÁ A MUDANÇA PRINCIPAL
 def handle_add_command(args):
     """
-    Lida com o comando 'add'. (Ainda não implementado)
+    Lida com o comando 'add', chamando a função core.add_document
+    e mostrando o resultado para o usuário.
     """
-    print(f"\nComando 'add' chamado.")
-    print(f"Arquivo a ser adicionado: {args.filepath}")
-    print("A lógica para adicionar o arquivo será implementada aqui.")
-    # Aqui chamaremos a função core.add_document(args.filepath)
+    print(f"\nAdicionando o arquivo: '{args.filepath}'...")
 
+    # Chama a função do core.py, passando o caminho do arquivo fornecido na CLI
+    sucesso, mensagem = add_document(args.filepath)
+
+    # Imprime a mensagem retornada pela função add_document (seja de sucesso ou erro)
+    print(mensagem)
+
+
+# A função run_cli permanece a mesma
 def run_cli():
     parser = argparse.ArgumentParser(
         description="Sistema de Gerenciamento de Documentos Digitais da Biblioteca",
@@ -62,7 +68,7 @@ def run_cli():
     # --- Parser para o comando 'add' ---
     add_parser = subparsers.add_parser('add', help='Adiciona um novo documento à biblioteca.')
     add_parser.add_argument('filepath', type=str, help='Caminho completo para o arquivo a ser adicionado.')
-    add_parser.set_defaults(func=handle_add_command) # Associa o comando 'add' à sua função manipuladora
+    add_parser.set_defaults(func=handle_add_command) 
 
     args = parser.parse_args()
 

@@ -49,11 +49,31 @@ def handle_rename_command(args):
     print(mensagem)
 
 
+# AQUI ESTÁ A MUDANÇA FINAL
 def handle_remove_command(args):
-    # ... (código existente sem alterações) ...
-    print(f"\nRemovendo o arquivo: '{args.filename}'...")
-    sucesso, mensagem = remove_document(args.filename)
-    print(mensagem)
+    """
+    Lida com o comando 'remove', pedindo confirmação antes de chamar
+    a função core.remove_document.
+    """
+    try:
+        # Pede confirmação ao usuário
+        confirm_message = f"\nAVISO: Você tem certeza que deseja remover permanentemente o arquivo '{args.filename}'? [s/n]: "
+        user_confirmation = input(confirm_message).lower().strip()
+
+        # Verifica a resposta do usuário
+        if user_confirmation in ['s', 'sim']:
+            print(f"Confirmado. Removendo o arquivo: '{args.filename}'...")
+            
+            # Chama a função do core.py
+            sucesso, mensagem = remove_document(args.filename)
+
+            # Imprime a mensagem retornada pela função
+            print(mensagem)
+        else:
+            print("Operação de remoção cancelada pelo usuário.")
+    except KeyboardInterrupt:
+        # Lida com o caso de o usuário pressionar Ctrl+C no prompt de input
+        print("\n\nOperação de remoção cancelada pelo usuário.")
 
 
 def run_cli():
@@ -101,5 +121,5 @@ def run_cli():
     else:
         parser.print_help()
 
-if __name__ == '__main__':
+if __name__ == '__main__':  
     run_cli()

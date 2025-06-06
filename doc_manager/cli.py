@@ -44,6 +44,17 @@ def handle_add_command(args):
     # Imprime a mensagem retornada pela função add_document (seja de sucesso ou erro)
     print(mensagem)
 
+def handle_rename_command(args):
+    """
+    Lida com o comando 'rename'. (Ainda não implementado)
+    """
+    print(f"\nComando 'rename' chamado.")
+    print(f"Nome antigo: {args.old_name}")
+    print(f"Nome novo: {args.new_name}")
+    print("A lógica para renomear o arquivo será implementada aqui.")
+    # Aqui chamaremos a função core.rename_document(args.old_name, args.new_name)
+
+
 
 # A função run_cli permanece a mesma
 def run_cli():
@@ -69,6 +80,12 @@ def run_cli():
     add_parser = subparsers.add_parser('add', help='Adiciona um novo documento à biblioteca.')
     add_parser.add_argument('filepath', type=str, help='Caminho completo para o arquivo a ser adicionado.')
     add_parser.set_defaults(func=handle_add_command) 
+
+     # --- Parser para o comando 'rename' ---
+    rename_parser = subparsers.add_parser('rename', help='Renomeia um documento existente na biblioteca.')
+    rename_parser.add_argument('old_name', type=str, help='Nome do arquivo atual (com extensão).')
+    rename_parser.add_argument('new_name', type=str, help='Novo nome para o arquivo (com extensão).')
+    rename_parser.set_defaults(func=handle_rename_command)
 
     args = parser.parse_args()
 

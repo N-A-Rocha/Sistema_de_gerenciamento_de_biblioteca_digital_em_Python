@@ -50,6 +50,14 @@ def handle_rename_command(args):
     # Imprime a mensagem retornada pela função (seja de sucesso ou erro)
     print(mensagem)
 
+def handle_remove_command(args):
+    """
+    Lida com o comando 'remove'. (Ainda não implementado)
+    """
+    print(f"\nComando 'remove' chamado.")
+    print(f"Arquivo a ser removido: {args.filename}")
+    print("A lógica para remover o arquivo será implementada aqui.")
+    # Aqui chamaremos a função core.remove_document(args.filename)
 
 # A função run_cli permanece a mesma, pois já configuramos o parser para 'rename'
 def run_cli():
@@ -81,6 +89,11 @@ def run_cli():
     rename_parser.add_argument('old_name', type=str, help='Nome do arquivo atual (com extensão).')
     rename_parser.add_argument('new_name', type=str, help='Novo nome para o arquivo (com extensão).')
     rename_parser.set_defaults(func=handle_rename_command)
+
+    # --- Parser para o comando 'remove' ---
+    remove_parser = subparsers.add_parser('remove', help='Remove um documento da biblioteca.')
+    remove_parser.add_argument('filename', type=str, help='Nome do arquivo a ser removido (com extensão).')
+    remove_parser.set_defaults(func=handle_remove_command)
 
     args = parser.parse_args()
 
